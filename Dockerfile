@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir .
 
 COPY . .
 
-CMD ["sh", "-c", "alembic stamp base && alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "python create_tables.py && uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
