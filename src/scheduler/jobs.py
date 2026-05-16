@@ -22,7 +22,7 @@ async def pipeline_job():
             logger.error(f"Pipeline run failed: {e}")
 
 
-def main():
+async def _run_scheduler():
     scheduler = AsyncIOScheduler()
     scheduler.add_job(
         pipeline_job,
@@ -37,12 +37,16 @@ def main():
     )
     scheduler.start()
 
-    # Run the event loop
     try:
-        asyncio.get_event_loop().run_forever()
+        while True:
+            await asyncio.sleep(3600)
     except (KeyboardInterrupt, SystemExit):
         logger.info("Shutting down scheduler")
         scheduler.shutdown()
+
+
+def main():
+    asyncio.run(_run_scheduler())
 
 
 if __name__ == "__main__":
