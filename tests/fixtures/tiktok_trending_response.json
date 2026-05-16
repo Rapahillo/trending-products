@@ -1,0 +1,63 @@
+{
+  "code": 0,
+  "data": {
+    "products": [
+      {
+        "id": "tiktok_001",
+        "title": "Portable Neck Fan",
+        "category": "Electronics",
+        "thumbnail": "https://example.com/neck-fan.jpg",
+        "advertiser_count": 45,
+        "creative_count": 120,
+        "ad_duration_days": 14,
+        "hashtag_views": 5200000,
+        "regions": ["US", "EU", "SEA"],
+        "engagement": {
+          "likes": 320000,
+          "shares": 45000,
+          "comments": 12000
+        },
+        "sample_creatives": [
+          {"url": "https://example.com/creative1.mp4", "thumbnail": "https://example.com/thumb1.jpg"},
+          {"url": "https://example.com/creative2.mp4", "thumbnail": "https://example.com/thumb2.jpg"}
+        ]
+      },
+      {
+        "id": "tiktok_002",
+        "title": "LED Galaxy Projector",
+        "category": "Home & Garden",
+        "thumbnail": "https://example.com/galaxy-projector.jpg",
+        "advertiser_count": 28,
+        "creative_count": 75,
+        "ad_duration_days": 21,
+        "hashtag_views": 3100000,
+        "regions": ["US", "EU"],
+        "engagement": {
+          "likes": 180000,
+          "shares": 28000,
+          "comments": 8000
+        },
+        "sample_creatives": [
+          {"url": "https://example.com/creative3.mp4", "thumbnail": "https://example.com/thumb3.jpg"}
+        ]
+      },
+      {
+        "id": "tiktok_003",
+        "title": "Magnetic Phone Mount",
+        "category": "Accessories",
+        "thumbnail": "https://example.com/phone-mount.jpg",
+        "advertiser_count": 8,
+        "creative_count": 15,
+        "ad_duration_days": 5,
+        "hashtag_views": 800000,
+        "regions": ["US"],
+        "engagement": {
+          "likes": 50000,
+          "shares": 7000,
+          "comments": 2000
+        },
+        "sample_creatives": []
+      }
+    ]
+  }
+}
