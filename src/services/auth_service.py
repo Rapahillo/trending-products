@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime, timedelta, timezone
 
 from jose import JWTError, jwt
@@ -6,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.settings import settings
+from src.models.api_key import ApiKey
 from src.models.user import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -52,3 +54,33 @@ async def authenticate_user(db: AsyncSession, email: str, password: str) -> User
 async def get_user_by_id(db: AsyncSession, user_id: str) -> User | None:
     result = await db.execute(select(User).where(User.id == user_id))
     return result.scalar_one_or_none()
+
+
+def generate_api_key() -> tuple[str, str]:
+    """Generate an API key. Returns (raw_key, hashed_key)."""
+    raw_key = f"tp_{secrets.token_urlsafe(32)}"
+    hashed = pwd_context.hash(raw_key)
+    return raw_key, hashed
+
+
+async def create_api_key(db: AsyncSession, user_id: str, name: str) -> tuple[ApiKey, str]:
+    """Create an API key for a user. Returns (api_key_record, raw_key)."""
+    raw_key, hashed = generate_api_key()
+    api_key = ApiKey(user_id=user_id, key_hash=hashed, name=name)
+    db.add(api_key)
+    await db.commit()
+    await db.refresh(api_key)
+    return api_key, raw_key
+
+
+async def delete_api_key(db: AsyncSession, key_id: str, user_id: str) -> bool:
+    """Delete an API key. Returns True if deleted, False if not found."""
+    result = await db.execute(
+        select(ApiKey).where(ApiKey.id == key_id, ApiKey.user_id == user_id)
+    )
+    api_key = result.scalar_one_or_none()
+    if not api_key:
+        return False
+    await db.delete(api_key)
+    await db.commit()
+    return True
