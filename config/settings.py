@@ -14,7 +14,15 @@ class Settings(BaseSettings):
     collector_retry_attempts: int = 3
     collector_retry_backoff: float = 2.0
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
+
+    @property
+    def async_database_url(self) -> str:
+        """Convert postgresql:// to postgresql+asyncpg:// for SQLAlchemy async driver."""
+        url = self.database_url
+        if url.startswith("postgresql://"):
+            url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return url
 
 
 settings = Settings()
