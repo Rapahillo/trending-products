@@ -97,7 +97,9 @@ railway run python -m scripts.seed_data
 Railway provides: `postgresql://user:pass@host:port/db`
 Our app needs: `postgresql+asyncpg://user:pass@host:port/db`
 
-Fix in `config/settings.py`:
+**Decision:** Handle in code so Railway's auto-injected URL works without manual editing.
+
+Add a computed property to `config/settings.py`:
 ```python
 @property
 def async_database_url(self) -> str:
@@ -107,8 +109,6 @@ def async_database_url(self) -> str:
     return url
 ```
 
-Then use `settings.async_database_url` in `database.py` and `alembic/env.py`.
-
-Alternatively, just set `DATABASE_URL` manually in Railway with the `+asyncpg` prefix (simpler, no code change).
-
-**Decision:** Set it manually in Railway. No code change needed.
+Update consumers to use `settings.async_database_url`:
+- `src/database.py` — engine creation
+- `alembic/env.py` — migration connection
