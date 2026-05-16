@@ -62,14 +62,17 @@ The API is now available at `http://localhost:8000`.
 
 ### Option B: Local Python + Docker for Services
 
-Run PostgreSQL and Redis in Docker, but run the API locally for faster iteration. Uses [uv](https://docs.astral.sh/uv/) for project-scoped dependency management (creates `.venv` automatically):
+Run PostgreSQL and Redis in Docker, but run the API locally for faster iteration:
 
 ```bash
 # 1. Start only database services
 docker compose up postgres redis -d
 
-# 2. Install dependencies (creates .venv in project root)
-uv sync --all-extras
+# 2. Create project-scoped virtual environment and install dependencies
+python -m venv .venv
+.venv\Scripts\activate       # Windows
+# source .venv/bin/activate  # Linux/Mac
+pip install -e ".[dev]"
 
 # 3. Create .env with localhost URLs
 cat > .env << 'EOF'
@@ -83,29 +86,29 @@ ALIEXPRESS_API_KEY=your-key-here
 EOF
 
 # 4. Run database migrations
-uv run alembic upgrade head
+alembic upgrade head
 
 # 5. (Optional) Seed sample data
-uv run python -m scripts.seed_data
+python -m scripts.seed_data
 
 # 6. Start the API server
-uv run uvicorn src.main:app --reload --port 8000
+uvicorn src.main:app --reload --port 8000
 
-# 7. (In another terminal) Start the pipeline worker
-uv run python -m src.scheduler.jobs
+# 7. (In another terminal, with venv activated) Start the pipeline worker
+python -m src.scheduler.jobs
 ```
 
 ### Running Tests
 
 ```bash
 # Unit tests (no external services needed)
-uv run pytest tests/unit/ -v
+pytest tests/unit/ -v
 
 # Integration tests (requires PostgreSQL running)
-uv run pytest tests/integration/ -v
+pytest tests/integration/ -v
 
 # All tests with coverage
-uv run pytest tests/ --cov=src --cov-report=term-missing
+pytest tests/ --cov=src --cov-report=term-missing
 ```
 
 ## API Usage
