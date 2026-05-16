@@ -1,0 +1,34 @@
+# Scoring weights - adjust without code changes
+# All weights must sum to 1.0
+
+weights:
+  advertiser_count: 0.25
+  ad_duration: 0.20
+  creative_volume: 0.15
+  engagement_velocity: 0.15
+  order_volume_growth: 0.15
+  supplier_availability: 0.10
+
+# Score calibration
+calibration_factor: 1.0
+
+# Velocity thresholds
+velocity_stable_threshold: 3
+velocity_declining_threshold: -5
+velocity_consecutive_runs_for_status: 3
+
+# Score thresholds
+trending_min_score: 30
+
+# Competition thresholds
+competition:
+  low_max_advertisers: 10
+  low_max_suppliers: 20
+  medium_max_advertisers: 50
+  medium_max_suppliers: 100
+
+# Margin calculation
+margin:
+  markup_min: 2.5
+  markup_max: 3.0
+  platform_fee_percent: 5
