@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.dependencies import get_current_user
+from src.api.dependencies import check_rate_limit, get_current_user, TIER_LIMITS
 from src.database import get_db
 from src.models.user import User
 from src.services.product_service import get_product, get_product_history, list_products
@@ -43,9 +43,15 @@ async def list_products_endpoint(
     order: str = Query("desc"),
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
-    user: User = Depends(get_current_user),
+    user: User = Depends(check_rate_limit),
     db: AsyncSession = Depends(get_db),
 ):
+    # Enforce tier-based limit on results
+    tier_limits = TIER_LIMITS[user.subscription_tier]
+    max_products = tier_limits["products_per_query"]
+    if max_products is not None:
+        limit = min(limit, max_products)
+
     products, total = await list_products(
         db, page=page, limit=limit, region=region, category=category,
         status=status_filter, min_score=min_score, velocity=velocity,
