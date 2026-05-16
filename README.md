@@ -62,21 +62,16 @@ The API is now available at `http://localhost:8000`.
 
 ### Option B: Local Python + Docker for Services
 
-Run PostgreSQL and Redis in Docker, but run the API locally for faster iteration:
+Run PostgreSQL and Redis in Docker, but run the API locally for faster iteration. Uses [uv](https://docs.astral.sh/uv/) for project-scoped dependency management (creates `.venv` automatically):
 
 ```bash
 # 1. Start only database services
 docker compose up postgres redis -d
 
-# 2. Create and activate a virtual environment
-python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# .venv\Scripts\activate   # Windows
+# 2. Install dependencies (creates .venv in project root)
+uv sync --all-extras
 
-# 3. Install dependencies
-pip install -e ".[dev]"
-
-# 4. Create .env with localhost URLs
+# 3. Create .env with localhost URLs
 cat > .env << 'EOF'
 DATABASE_URL=postgresql+asyncpg://trending:trending_dev@localhost:5432/trending
 REDIS_URL=redis://localhost:6379/0
@@ -87,30 +82,30 @@ TIKTOK_BASE_URL=https://ads.tiktok.com/creative_radar_api/v1/
 ALIEXPRESS_API_KEY=your-key-here
 EOF
 
-# 5. Run database migrations
-alembic upgrade head
+# 4. Run database migrations
+uv run alembic upgrade head
 
-# 6. (Optional) Seed sample data
-python -m scripts.seed_data
+# 5. (Optional) Seed sample data
+uv run python -m scripts.seed_data
 
-# 7. Start the API server
-uvicorn src.main:app --reload --port 8000
+# 6. Start the API server
+uv run uvicorn src.main:app --reload --port 8000
 
-# 8. (In another terminal) Start the pipeline worker
-python -m src.scheduler.jobs
+# 7. (In another terminal) Start the pipeline worker
+uv run python -m src.scheduler.jobs
 ```
 
 ### Running Tests
 
 ```bash
 # Unit tests (no external services needed)
-pytest tests/unit/ -v
+uv run pytest tests/unit/ -v
 
 # Integration tests (requires PostgreSQL running)
-pytest tests/integration/ -v
+uv run pytest tests/integration/ -v
 
 # All tests with coverage
-pytest tests/ --cov=src --cov-report=term-missing
+uv run pytest tests/ --cov=src --cov-report=term-missing
 ```
 
 ## API Usage
