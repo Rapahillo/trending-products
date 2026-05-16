@@ -1,0 +1,64 @@
+### Health Check
+GET http://localhost:8000/health
+
+###
+
+### Register
+POST http://localhost:8000/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "email": "demo@test.com",
+  "password": "demo123"
+}
+
+###
+
+### Login
+# @name login
+POST http://localhost:8000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo@test.com",
+  "password": "demo123"
+}
+
+###
+
+@token = {{login.response.body.data.access_token}}
+
+### Get Current User
+GET http://localhost:8000/api/v1/auth/me
+Authorization: Bearer {{token}}
+
+###
+
+### List Trending Products
+GET http://localhost:8000/api/v1/products
+Authorization: Bearer {{token}}
+
+###
+
+### List Products - Filtered
+GET http://localhost:8000/api/v1/products?region=US&category=Electronics&min_score=50&sort=score&order=desc
+Authorization: Bearer {{token}}
+
+###
+
+### Get Single Product (replace with real ID)
+GET http://localhost:8000/api/v1/products/{{$dotenv PRODUCT_ID}}
+Authorization: Bearer {{token}}
+
+###
+
+### Get Product Score History (replace with real ID)
+GET http://localhost:8000/api/v1/products/{{$dotenv PRODUCT_ID}}/history
+Authorization: Bearer {{token}}
+
+###
+
+### Pipeline Status
+GET http://localhost:8000/api/v1/status/pipeline
+
+###
